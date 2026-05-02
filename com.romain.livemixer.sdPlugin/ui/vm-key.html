@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <style>
+    body { font-family: system-ui, sans-serif; font-size: 13px; color: #ccc; background: transparent; margin: 0; padding: 16px; }
+    label { display: block; margin-bottom: 4px; color: #999; }
+    .row { margin-bottom: 14px; }
+    select, input { width: 100%; background: #2a2a2a; color: #fff; border: 1px solid #444; border-radius: 4px; padding: 6px 8px; font-size: 13px; box-sizing: border-box; }
+    input:focus, select:focus { outline: none; border-color: #666; }
+    small { color: #666; font-size: 11px; display: block; margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <div class="row">
+    <label>Type</label>
+    <select id="targetType">
+      <option value="Strip" selected>Strip / Input</option>
+      <option value="Bus">Bus / Output</option>
+    </select>
+  </div>
+  <div class="row">
+    <label>Index Voicemeeter</label>
+    <select id="targetIndex">
+      <option value="0">0</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3" selected>3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+    </select>
+  </div>
+  <div class="row">
+    <label>Label</label>
+    <input id="label" type="text" value="Mute"/>
+  </div>
+  <div class="row">
+    <label>Icon</label>
+    <select id="icon">
+      <option value="music">Music</option>
+      <option value="stream">Stream</option>
+      <option value="mic" selected>Mic</option>
+      <option value="mic-vocal">Mic Vocal</option>
+      <option value="monitor">Headphones</option>
+      <option value="audio-lines">Audio Lines</option>
+      <option value="volume">Volume</option>
+      <option value="sparkles">Sparkles</option>
+      <option value="sliders">Sliders</option>
+    </select>
+  </div>
+  <small>Press toggles Mute on the selected Strip[n] or Bus[n].</small>
+
+  <script>
+    const connectElgatoStreamDeckSocket = (port, uuid, event, info) => {
+      const ws = new WebSocket(`ws://127.0.0.1:${port}`);
+      let settings = {};
+      const ids = ['targetType', 'targetIndex', 'label', 'icon'];
+
+      ws.onopen = () => {
+        ws.send(JSON.stringify({ event, uuid }));
+        ws.send(JSON.stringify({ event: 'getSettings', context: uuid }));
+      };
+      ws.onmessage = (msg) => {
+        const d = JSON.parse(msg.data);
+        if (d.event !== 'didReceiveSettings') return;
+        settings = d.payload.settings || {};
+        ids.forEach(id => {
+          if (settings[id] !== undefined) document.getElementById(id).value = settings[id];
+        });
+      };
+      const save = () => {
+        ids.forEach(id => settings[id] = document.getElementById(id).value);
+        ws.send(JSON.stringify({ event: 'setSettings', context: uuid, payload: settings }));
+      };
+      ids.forEach(id => document.getElementById(id).addEventListener(id === 'label' ? 'input' : 'change', save));
+    };
+  </script>
+</body>
+</html>

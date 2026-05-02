@@ -1,0 +1,150 @@
+{
+  "id": "com.romain.reaper-mic.vu-meter",
+  "items": [
+    {
+      "key": "backgroundDial",
+      "type": "pixmap",
+      "rect": [
+        4,
+        4,
+        192,
+        92
+      ],
+      "zOrder": 1,
+      "value": "./imgs/common/dialBackground.svg"
+    },
+    {
+      "key": "icon",
+      "type": "pixmap",
+      "rect": [
+        16,
+        12,
+        24,
+        24
+      ],
+      "zOrder": 10,
+      "value": "./imgs/common/micIcon.svg"
+    },
+    {
+      "key": "title",
+      "type": "text",
+      "rect": [
+        48,
+        12,
+        136,
+        24
+      ],
+      "font": {
+        "size": 17,
+        "weight": 700
+      },
+      "alignment": "left",
+      "zOrder": 10
+    },
+    {
+      "key": "dial",
+      "type": "pixmap",
+      "rect": [
+        16,
+        44,
+        130,
+        52
+      ],
+      "zOrder": 20,
+      "value": "./imgs/common/dial.svg"
+    },
+    {
+      "key": "value",
+      "type": "text",
+      "rect": [
+        140,
+        48,
+        44,
+        24
+      ],
+      "font": {
+        "size": 24,
+        "weight": 700
+      },
+      "alignment": "right",
+      "zOrder": 30
+    },
+    {
+      "key": "unit",
+      "type": "text",
+      "rect": [
+        148,
+        72,
+        36,
+        14
+      ],
+      "font": {
+        "size": 14,
+        "weight": 700
+      },
+      "alignment": "right",
+      "zOrder": 30,
+      "value": "%"
+    },
+    {
+      "key": "levelmeterBackground",
+      "type": "pixmap",
+      "rect": [
+        16,
+        44,
+        130,
+        52
+      ],
+      "zOrder": 40,
+      "value": "./imgs/common/levelMeterBackground.svg"
+    },
+    {
+      "key": "levelmeter",
+      "type": "pixmap",
+      "rect": [
+        32,
+        56,
+        98,
+        40
+      ],
+      "zOrder": 41
+    },
+    {
+      "key": "mainIndicator",
+      "type": "pixmap",
+      "rect": [
+        45,
+        69,
+        72,
+        27
+      ],
+      "zOrder": 42
+    },
+    {
+      "key": "muteOverlay",
+      "type": "pixmap",
+      "rect": [
+        4,
+        4,
+        192,
+        92
+      ],
+      "zOrder": 100,
+      "value": "./imgs/common/dialMuted.svg",
+      "enabled": false
+    },
+    {
+      "key": "micMutedIcon",
+      "type": "pixmap",
+      "rect": [
+        148,
+        46,
+        26,
+        26
+      ],
+      "zOrder": 35,
+      "value": "./imgs/common/micIconMuted.svg",
+      "enabled": false
+    }
+  ]
+}

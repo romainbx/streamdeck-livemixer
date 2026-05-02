@@ -1,0 +1,180 @@
+{
+  "Name": "Live",
+  "Version": "1.0.0",
+  "Author": "Romain",
+  "Description": "Voicemeeter + Reaper controls for live streaming",
+  "Category": "Live",
+  "CategoryIcon": "imgs/action-icon",
+  "Icon": "imgs/action-icon",
+  "UUID": "com.romain.live",
+  "SDKVersion": 2,
+  "Software": {
+    "MinimumVersion": "6.4"
+  },
+  "OS": [
+    {
+      "Platform": "windows",
+      "MinimumVersion": "10"
+    }
+  ],
+  "Nodejs": {
+    "Version": "20"
+  },
+  "Actions": [
+    {
+      "Name": "Musique",
+      "UUID": "com.romain.live.musique",
+      "Icon": "imgs/common/musicIcon",
+      "Controllers": [
+        "Encoder"
+      ],
+      "Encoder": {
+        "layout": "$B2",
+        "TriggerDescription": {
+          "Push": "Mute / Unmute",
+          "Rotate": "Volume",
+          "Touch": "Reset 0dB"
+        }
+      },
+      "States": [
+        {
+          "Image": "imgs/action-icon"
+        }
+      ],
+      "PropertyInspectorPath": "ui/dial.html"
+    },
+    {
+      "Name": "Mic",
+      "UUID": "com.romain.live.mic",
+      "Icon": "imgs/common/micIcon",
+      "Controllers": [
+        "Encoder"
+      ],
+      "Encoder": {
+        "layout": "$B2",
+        "TriggerDescription": {
+          "Push": "Mute / Unmute",
+          "Rotate": "Volume",
+          "Touch": "Reset 0dB"
+        }
+      },
+      "States": [
+        {
+          "Image": "imgs/action-icon"
+        }
+      ],
+      "PropertyInspectorPath": "ui/dial.html"
+    },
+    {
+      "Name": "Monitor",
+      "UUID": "com.romain.live.monitor",
+      "Icon": "imgs/common/monitorIcon",
+      "Controllers": [
+        "Encoder"
+      ],
+      "Encoder": {
+        "layout": "$B2",
+        "TriggerDescription": {
+          "Push": "Mute / Unmute",
+          "Rotate": "Volume",
+          "Touch": "Reset 0dB"
+        }
+      },
+      "States": [
+        {
+          "Image": "imgs/action-icon"
+        }
+      ],
+      "PropertyInspectorPath": "ui/dial.html"
+    },
+    {
+      "Name": "Stream",
+      "UUID": "com.romain.live.stream",
+      "Icon": "imgs/common/streamIcon",
+      "Controllers": [
+        "Encoder"
+      ],
+      "Encoder": {
+        "layout": "$B2",
+        "TriggerDescription": {
+          "Push": "Mute / Unmute",
+          "Rotate": "Volume",
+          "Touch": "Reset 0dB"
+        }
+      },
+      "States": [
+        {
+          "Image": "imgs/action-icon"
+        }
+      ],
+      "PropertyInspectorPath": "ui/dial.html"
+    },
+    {
+      "Name": "FX Toggle",
+      "UUID": "com.romain.live.fx-toggle",
+      "Icon": "imgs/effectOn",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "imgs/effectOn",
+          "Title": "FX On",
+          "TitleAlignment": "bottom",
+          "FontSize": "12"
+        },
+        {
+          "Image": "imgs/effectOff",
+          "Title": "FX Off",
+          "TitleAlignment": "bottom",
+          "FontSize": "12"
+        }
+      ],
+      "PropertyInspectorPath": "ui/fx-toggle.html"
+    },
+    {
+      "Name": "Voicemeeter Dial",
+      "UUID": "com.romain.live.vm-dial",
+      "Icon": "imgs/action-icon",
+      "Controllers": [
+        "Encoder"
+      ],
+      "Encoder": {
+        "layout": "$B2",
+        "TriggerDescription": {
+          "Push": "Mute / Unmute",
+          "Rotate": "Volume",
+          "Touch": "Reset"
+        }
+      },
+      "States": [
+        {
+          "Image": "imgs/action-icon"
+        }
+      ],
+      "PropertyInspectorPath": "ui/vm-dial.html"
+    },
+    {
+      "Name": "Voicemeeter Mute",
+      "UUID": "com.romain.live.vm-mute",
+      "Icon": "imgs/action-icon",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "imgs/action-icon",
+          "TitleAlignment": "bottom",
+          "FontSize": "12"
+        },
+        {
+          "Image": "imgs/common/speakerIconMuted",
+          "TitleAlignment": "bottom",
+          "FontSize": "12"
+        }
+      ],
+      "PropertyInspectorPath": "ui/vm-key.html"
+    }
+  ],
+  "CodePath": "bin/plugin.js"
+}

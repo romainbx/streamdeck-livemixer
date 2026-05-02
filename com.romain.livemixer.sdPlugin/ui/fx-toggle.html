@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <style>
+    body { font-family: system-ui, sans-serif; font-size: 13px; color: #ccc; background: transparent; margin: 0; padding: 16px; }
+    label { display: block; margin-bottom: 4px; color: #999; }
+    .row { margin-bottom: 16px; }
+    select, input { width: 100%; background: #2a2a2a; color: #fff; border: 1px solid #444; border-radius: 4px; padding: 6px 8px; font-size: 13px; box-sizing: border-box; }
+    input:focus, select:focus { outline: none; border-color: #666; }
+    small { color: #666; font-size: 11px; display: block; margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <div class="row">
+    <label>Track number</label>
+    <select id="trackNumber">
+      <option value="1" selected>Track 1</option>
+      <option value="2">Track 2</option>
+      <option value="3">Track 3</option>
+      <option value="4">Track 4</option>
+      <option value="5">Track 5</option>
+      <option value="6">Track 6</option>
+      <option value="7">Track 7</option>
+      <option value="8">Track 8</option>
+    </select>
+  </div>
+  <div class="row">
+    <label>FX slots (séparés par virgule)</label>
+    <input type="text" id="fxList" placeholder="ex: 3,4" value="1"/>
+    <small>Numéros visibles dans la FX chain de Reaper</small>
+  </div>
+  <div class="row">
+    <label>Reaper OSC host</label>
+    <input type="text" id="reaperHost" value="127.0.0.1"/>
+  </div>
+  <div class="row">
+    <label>Reaper OSC send port</label>
+    <input type="number" id="reaperPort" value="8000" min="1" max="65535"/>
+  </div>
+  <div class="row">
+    <label>Plugin listen port</label>
+    <input type="number" id="listenPort" value="9003" min="1" max="65535"/>
+    <small>Must match Reaper's local control surface send port.</small>
+  </div>
+
+  <script>
+    const connectElgatoStreamDeckSocket = (port, uuid, event, info) => {
+      const ws = new WebSocket(`ws://127.0.0.1:${port}`);
+      let settings = {};
+      ws.onopen = () => {
+        ws.send(JSON.stringify({ event, uuid }));
+        ws.send(JSON.stringify({ event: 'getSettings', context: uuid }));
+      };
+      ws.onmessage = (msg) => {
+        const data = JSON.parse(msg.data);
+        if (data.event === 'didReceiveSettings') {
+          settings = data.payload.settings || {};
+          if (settings.trackNumber) document.getElementById('trackNumber').value = settings.trackNumber;
+          if (settings.fxList) document.getElementById('fxList').value = settings.fxList;
+          if (settings.reaperHost) document.getElementById('reaperHost').value = settings.reaperHost;
+          if (settings.reaperPort) document.getElementById('reaperPort').value = settings.reaperPort;
+          if (settings.listenPort) document.getElementById('listenPort').value = settings.listenPort;
+        }
+      };
+      const save = () => {
+        settings.trackNumber = parseInt(document.getElementById('trackNumber').value);
+        settings.fxList = document.getElementById('fxList').value;
+        settings.reaperHost = document.getElementById('reaperHost').value;
+        settings.reaperPort = parseInt(document.getElementById('reaperPort').value);
+        settings.listenPort = parseInt(document.getElementById('listenPort').value);
+        ws.send(JSON.stringify({ event: 'setSettings', context: uuid, payload: settings }));
+      };
+      document.getElementById('trackNumber').addEventListener('change', save);
+      document.getElementById('fxList').addEventListener('input', save);
+      document.getElementById('reaperHost').addEventListener('input', save);
+      document.getElementById('reaperPort').addEventListener('input', save);
+      document.getElementById('listenPort').addEventListener('input', save);
+    };
+  </script>
+</body>
+</html>
