@@ -34,10 +34,3 @@ export function pctToLevel(pct: number): number {
 export function clampPct(pct: number): number {
   return Math.max(0, Math.min(100, pct));
 }
-
-export function smoothVu(current: number, next: number): number {
-  const vu = Math.max(0, Math.min(1, next));
-  if (vu >= current) return vu;
-  if (vu < 0.01 && current < 0.02) return 0;
-  return Math.max(0, current - 0.05);
-}

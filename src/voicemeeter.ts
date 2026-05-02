@@ -91,17 +91,18 @@ export function vmGetLevel(type: number, channel: number): number {
   } catch { return 0; }
 }
 
-function maxLevel(type: number, startChannel: number, count: number): number {
-  let peak = 0;
-  for (let i = 0; i < count; i++) {
-    peak = Math.max(peak, vmGetLevel(type, startChannel + i));
-  }
-  return peak;
-}
-
 export const VM = {
-  getLevelStrip: (strip: number): number => maxLevel(0, strip * 2, 2),
-  getLevelBus: (bus: number): number => maxLevel(3, bus * 8, 8),
+  getLevelStrip: (strip: number): number => {
+    const ch = strip * 2;
+    const l = vmGetLevel(0, ch);
+    const r = vmGetLevel(0, ch + 1);
+    return Math.max(l, r);
+  },
+  getLevelBus: (bus: number): number => {
+    const l = vmGetLevel(3, bus * 8);
+    const r = vmGetLevel(3, bus * 8 + 1);
+    return Math.max(l, r);
+  },
   getGain: (param: string) => vmGetFloat(param),
   setGain: (param: string, db: number) => vmSetFloat(param, db),
   getMute: (param: string) => vmGetFloat(param) > 0.5,

@@ -1,6 +1,6 @@
 import streamDeck, { action, SingletonAction, DialDownEvent, DialRotateEvent, TouchTapEvent, WillAppearEvent, WillDisappearEvent } from "@elgato/streamdeck";
 import { VM, vmInit } from "../voicemeeter.js";
-import { clampPct, dbToPct, indicatorSVG, pctToDb, pctToLevel, smoothVu, vuSVG } from "../dial-base.js";
+import { clampPct, dbToPct, indicatorSVG, pctToDb, pctToLevel, vuSVG } from "../dial-base.js";
 import { OFF_ICON } from "../icons.js";
 import { gainParam, getVmSettings, level, muteParam, VmSettings } from "../vm-settings.js";
 
@@ -61,10 +61,12 @@ function startVU(st: DialState): void {
   st.vuInterval = setInterval(async () => {
     if (!st.action || st.isAdjusting) return;
     const vu = level(st.settings);
-    if (vu > 0.005) {
+    if (vu > 0.01) {
+      st.currentVU = vu;
       st.lastVUTimestamp = Date.now();
+    } else if (Date.now() - st.lastVUTimestamp > 150 && st.currentVU > 0) {
+      st.currentVU = Math.max(0, st.currentVU - 0.05);
     }
-    st.currentVU = smoothVu(st.currentVU, Date.now() - st.lastVUTimestamp > 300 ? 0 : vu);
     await renderVU(st);
   }, 100);
 }

@@ -8316,19 +8316,17 @@ function vmGetLevel(type, channel) {
         return 0;
     }
 }
-function maxLevel(type, startChannel, count) {
-    let peak = 0;
-    for (let i = 0; i < count; i++) {
-        peak = Math.max(peak, vmGetLevel(type, startChannel + i));
-    }
-    return peak;
-}
 const VM = {
     getLevelStrip: (strip) => {
-        return maxLevel(0, strip * 2, 2);
+        const ch = strip * 2;
+        const l = vmGetLevel(0, ch);
+        const r = vmGetLevel(0, ch + 1);
+        return Math.max(l, r);
     },
     getLevelBus: (bus) => {
-        return maxLevel(3, bus * 8, 8);
+        const l = vmGetLevel(3, bus * 8);
+        const r = vmGetLevel(3, bus * 8 + 1);
+        return Math.max(l, r);
     },
     getGain: (param) => vmGetFloat(param),
     setGain: (param, db) => vmSetFloat(param, db),
@@ -8371,14 +8369,6 @@ function pctToLevel(pct) {
 }
 function clampPct(pct) {
     return Math.max(0, Math.min(100, pct));
-}
-function smoothVu(current, next) {
-    const vu = Math.max(0, Math.min(1, next));
-    if (vu >= current)
-        return vu;
-    if (vu < 0.01 && current < 0.02)
-        return 0;
-    return Math.max(0, current - 0.05);
 }
 
 function makeDialAction(cfg) {
@@ -8441,9 +8431,13 @@ function makeDialAction(cfg) {
             if (!currentAction || isAdjusting)
                 return;
             const vu = cfg.levelFn();
-            if (vu > 0.005)
+            if (vu > 0.01) {
+                currentVU = vu;
                 lastVUTimestamp = Date.now();
-            currentVU = smoothVu(currentVU, Date.now() - lastVUTimestamp > 300 ? 0 : vu);
+            }
+            else if (Date.now() - lastVUTimestamp > 150 && currentVU > 0) {
+                currentVU = Math.max(0, currentVU - 0.05);
+            }
             await renderVU();
         }, 100);
     }
@@ -8601,6 +8595,8 @@ function genericMuteParam(s) {
 function genericLevel(s) {
     const type = s.vuMode === "custom" ? s.vuType : s.targetType;
     const index = s.vuMode === "custom" ? s.vuIndex : s.targetIndex;
+    if (s.vuMode !== "custom" && type === "Strip" && index === 4)
+        return VM.getLevelStrip(0);
     return type === "Bus" ? VM.getLevelBus(index) : VM.getLevelStrip(index);
 }
 async function renderGenericDial(st) {
@@ -8652,9 +8648,13 @@ function startGenericVU(st) {
         if (!st.action || st.isAdjusting)
             return;
         const vu = genericLevel(st.settings);
-        if (vu > 0.005)
+        if (vu > 0.01) {
+            st.currentVU = vu;
             st.lastVUTimestamp = Date.now();
-        st.currentVU = smoothVu(st.currentVU, Date.now() - st.lastVUTimestamp > 300 ? 0 : vu);
+        }
+        else if (Date.now() - st.lastVUTimestamp > 150 && st.currentVU > 0) {
+            st.currentVU = Math.max(0, st.currentVU - 0.05);
+        }
         await renderGenericVU(st);
     }, 100);
 }

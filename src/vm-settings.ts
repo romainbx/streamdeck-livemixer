@@ -46,5 +46,8 @@ export function muteParam(s: VmSettings): string {
 export function level(s: VmSettings): number {
   const type = s.vuMode === "custom" ? s.vuType : s.targetType;
   const index = s.vuMode === "custom" ? s.vuIndex : s.targetIndex;
+  if (s.vuMode !== "custom" && type === "Strip" && index === 4) {
+    return VM.getLevelStrip(0);
+  }
   return type === "Bus" ? VM.getLevelBus(index) : VM.getLevelStrip(index);
 }
