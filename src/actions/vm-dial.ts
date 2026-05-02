@@ -133,9 +133,10 @@ export class GenericVmDial extends SingletonAction {
   override async onTouchTap(ev: TouchTapEvent): Promise<void> {
     const st = states.get(ev.action.id);
     if (!st) return;
-    st.currentPct = st.settings.defaultPct;
-    startAdjusting(st);
-    VM.setGain(gainParam(st.settings), pctToDb(st.currentPct));
+    st.settings = getVmSettings(ev.payload.settings);
+    if (st.settings.touchAction !== "toggleMute") return;
+    st.isMuted = !st.isMuted;
+    VM.setMute(muteParam(st.settings), st.isMuted);
     await render(st);
   }
 }

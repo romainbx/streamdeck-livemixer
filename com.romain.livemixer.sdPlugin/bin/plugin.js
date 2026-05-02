@@ -8593,7 +8593,7 @@ function getGenericSettings(raw) {
         label: String(raw?.label || `${targetType} ${targetIndex}`),
         icon,
         stepSize: Math.max(1, parseInt(raw?.stepSize ?? "2") || 2),
-        defaultPct: clampPct(parseInt(raw?.defaultPct ?? "80") || 80),
+        touchAction: raw?.touchAction === "toggleMute" ? "toggleMute" : "none",
     };
 }
 function genericGainParam(s) {
@@ -8737,9 +8737,11 @@ const GenericVmDial = action({ UUID: "com.romain.live.vm-dial" })(class extends 
         const st = genericDialStates.get(ev.action.id);
         if (!st)
             return;
-        st.currentPct = st.settings.defaultPct;
-        startGenericAdjusting(st);
-        VM.setGain(genericGainParam(st.settings), pctToDb(st.currentPct));
+        st.settings = getGenericSettings(ev.payload.settings);
+        if (st.settings.touchAction !== "toggleMute")
+            return;
+        st.isMuted = !st.isMuted;
+        VM.setMute(genericMuteParam(st.settings), st.isMuted);
         await renderGenericDial(st);
     }
 });

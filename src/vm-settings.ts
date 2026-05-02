@@ -1,5 +1,4 @@
 import { VM } from "./voicemeeter.js";
-import { clampPct } from "./dial-base.js";
 import { ICONS } from "./icons.js";
 
 export type VmTargetType = "Strip" | "Bus";
@@ -13,7 +12,7 @@ export type VmSettings = {
   label: string;
   icon: string;
   stepSize: number;
-  defaultPct: number;
+  touchAction: "none" | "toggleMute";
 };
 
 function parseIndex(value: unknown, fallback: number): number {
@@ -32,7 +31,7 @@ export function getVmSettings(raw: any): VmSettings {
     label: String(raw?.label || `${targetType} ${targetIndex}`),
     icon: ICONS[raw?.icon] ?? ICONS.mic,
     stepSize: Math.max(1, parseInt(raw?.stepSize ?? "2") || 2),
-    defaultPct: clampPct(parseInt(raw?.defaultPct ?? "80") || 80),
+    touchAction: raw?.touchAction === "toggleMute" ? "toggleMute" : "none",
   };
 }
 

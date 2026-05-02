@@ -62,7 +62,7 @@
     <small>Use custom for cases like volume Strip[4], VU Strip[0].</small>
   </div>
   <div class="row">
-    <label>Titre</label>
+    <label>Texte du dial</label>
     <input id="label" type="text" value="VM"/>
   </div>
   <div class="row">
@@ -90,14 +90,10 @@
     </select>
   </div>
   <div class="row">
-    <label>Reset touch (%)</label>
-    <select id="defaultPct">
-      <option value="50">50%</option>
-      <option value="60">60%</option>
-      <option value="70">70%</option>
-      <option value="80" selected>80%</option>
-      <option value="90">90%</option>
-      <option value="100">100%</option>
+    <label>Touch</label>
+    <select id="touchAction">
+      <option value="none" selected>None</option>
+      <option value="toggleMute">Toggle mute</option>
     </select>
   </div>
 
@@ -105,7 +101,7 @@
     const connectElgatoStreamDeckSocket = (port, uuid, event, info) => {
       const ws = new WebSocket(`ws://127.0.0.1:${port}`);
       let settings = {};
-      const ids = ['targetType', 'targetIndex', 'vuMode', 'vuType', 'vuIndex', 'label', 'icon', 'stepSize', 'defaultPct'];
+      const ids = ['targetType', 'targetIndex', 'vuMode', 'vuType', 'vuIndex', 'label', 'icon', 'stepSize', 'touchAction'];
       const updateVuFields = () => {
         const custom = document.getElementById('vuMode').value === 'custom';
         document.querySelectorAll('.vu-custom').forEach(el => el.style.display = custom ? 'block' : 'none');
