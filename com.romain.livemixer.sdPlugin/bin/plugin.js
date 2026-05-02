@@ -8310,24 +8310,18 @@ function vmGetLevel(type, channel) {
     try {
         const out = new Float32Array(1);
         dll.GetLevel(type, channel, out);
-        return Math.max(0, out[0]);
+        return Math.max(0, Math.min(1, out[0]));
     }
     catch {
         return 0;
     }
-}
-function amplitudeToMeter(value) {
-    if (value <= 0.000001)
-        return 0;
-    const db = 20 * Math.log10(value);
-    return Math.max(0, Math.min(1, (db + 60) / 60));
 }
 function maxLevel(type, startChannel, count) {
     let peak = 0;
     for (let i = 0; i < count; i++) {
         peak = Math.max(peak, vmGetLevel(type, startChannel + i));
     }
-    return amplitudeToMeter(peak);
+    return peak;
 }
 const VM = {
     getLevelStrip: (strip) => {
@@ -8352,7 +8346,9 @@ function vuSVG(vu, level, adjusting, muted) {
         const l = muted ? 130 : 130 * (1 - vol);
         return `data:image/svg+xml;base64,${toBase64(`<svg width="98" height="98" viewBox="0 0 98 40" xmlns="http://www.w3.org/2000/svg"><mask id="m"><path transform="rotate(${-l} 49 49)" fill="white" d="${ARC}"/></mask><path mask="url(#m)" d="${ARC}" fill="white"/></svg>`)}`;
     }
-    const vuCapped = Math.min(vol, Math.max(0, vu));
+    // Raw GetLevel is linear 0-1; scale x2 so quieter program material remains visible.
+    const vuScaled = Math.min(1, Math.max(0, vu) * 2);
+    const vuCapped = Math.min(vol, vuScaled);
     const lvu = 130 * (1 - vuCapped);
     return `data:image/svg+xml;base64,${toBase64(`<svg width="98" height="98" viewBox="0 0 98 40" xmlns="http://www.w3.org/2000/svg"><mask id="m"><path transform="rotate(${-lvu} 49 49)" fill="white" d="${ARC}"/></mask><path mask="url(#m)" d="${ARC}" fill="url(#g)"/><defs><linearGradient id="g" x1="5" y1="49" x2="98" y2="49" gradientUnits="userSpaceOnUse"><stop stop-color="#3BB455"/><stop offset="60%" stop-color="#3BB455"/><stop offset="80%" stop-color="#FBDB00"/><stop offset="95%" stop-color="#FF3C4E"/></linearGradient></defs></svg>`)}`;
 }
@@ -8380,9 +8376,9 @@ function smoothVu(current, next) {
     const vu = Math.max(0, Math.min(1, next));
     if (vu >= current)
         return vu;
-    if (vu < 0.005 && current < 0.02)
+    if (vu < 0.01 && current < 0.02)
         return 0;
-    return current * 0.82 + vu * 0.18;
+    return Math.max(0, current - 0.05);
 }
 
 function makeDialAction(cfg) {

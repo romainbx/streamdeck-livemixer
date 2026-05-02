@@ -6,7 +6,8 @@ export const ARC = "M6.76478 28.4005C5.76753 27.9141 5.34975 26.709 5.8766 25.73
 
 export function vuSVG(vu: number, level: number, adjusting: boolean, muted: boolean): string {
   const vol = Math.min(1, Math.max(0, level));
-  const shown = adjusting || muted ? vol : Math.min(vol, Math.max(0, vu));
+  const vuScaled = Math.min(1, Math.max(0, vu) * 2);
+  const shown = adjusting || muted ? vol : Math.min(vol, vuScaled);
   const rotation = 130 * (1 - shown);
   const fill = adjusting || muted ? "white" : "url(#g)";
   const defs = adjusting || muted ? "" : `<defs><linearGradient id="g" x1="5" y1="49" x2="98" y2="49" gradientUnits="userSpaceOnUse"><stop stop-color="#3BB455"/><stop offset="60%" stop-color="#3BB455"/><stop offset="80%" stop-color="#FBDB00"/><stop offset="95%" stop-color="#FF3C4E"/></linearGradient></defs>`;
@@ -37,6 +38,6 @@ export function clampPct(pct: number): number {
 export function smoothVu(current: number, next: number): number {
   const vu = Math.max(0, Math.min(1, next));
   if (vu >= current) return vu;
-  if (vu < 0.005 && current < 0.02) return 0;
-  return current * 0.82 + vu * 0.18;
+  if (vu < 0.01 && current < 0.02) return 0;
+  return Math.max(0, current - 0.05);
 }

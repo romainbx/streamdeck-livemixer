@@ -87,14 +87,8 @@ export function vmGetLevel(type: number, channel: number): number {
   try {
     const out = new Float32Array(1);
     dll.GetLevel(type, channel, out);
-    return Math.max(0, out[0]);
+    return Math.max(0, Math.min(1, out[0]));
   } catch { return 0; }
-}
-
-function amplitudeToMeter(value: number): number {
-  if (value <= 0.000001) return 0;
-  const db = 20 * Math.log10(value);
-  return Math.max(0, Math.min(1, (db + 60) / 60));
 }
 
 function maxLevel(type: number, startChannel: number, count: number): number {
@@ -102,7 +96,7 @@ function maxLevel(type: number, startChannel: number, count: number): number {
   for (let i = 0; i < count; i++) {
     peak = Math.max(peak, vmGetLevel(type, startChannel + i));
   }
-  return amplitudeToMeter(peak);
+  return peak;
 }
 
 export const VM = {
