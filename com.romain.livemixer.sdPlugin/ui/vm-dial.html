@@ -34,21 +34,21 @@
     <small>Ex: Strip[3].Gain et VU Strip[3]</small>
   </div>
   <div class="row">
-    <label>VU source</label>
+    <label>VU Source</label>
     <select id="vuMode">
       <option value="same" selected>Same as volume</option>
       <option value="custom">Custom</option>
     </select>
   </div>
-  <div class="row">
-    <label>VU type</label>
+  <div class="row vu-custom">
+    <label>VU Type</label>
     <select id="vuType">
       <option value="Strip" selected>Strip / Input</option>
       <option value="Bus">Bus / Output</option>
     </select>
   </div>
-  <div class="row">
-    <label>VU index</label>
+  <div class="row vu-custom">
+    <label>VU Index</label>
     <select id="vuIndex">
       <option value="0" selected>0</option>
       <option value="1">1</option>
@@ -62,7 +62,7 @@
     <small>Use custom for cases like volume Strip[4], VU Strip[0].</small>
   </div>
   <div class="row">
-    <label>Label</label>
+    <label>Titre</label>
     <input id="label" type="text" value="VM"/>
   </div>
   <div class="row">
@@ -106,6 +106,10 @@
       const ws = new WebSocket(`ws://127.0.0.1:${port}`);
       let settings = {};
       const ids = ['targetType', 'targetIndex', 'vuMode', 'vuType', 'vuIndex', 'label', 'icon', 'stepSize', 'defaultPct'];
+      const updateVuFields = () => {
+        const custom = document.getElementById('vuMode').value === 'custom';
+        document.querySelectorAll('.vu-custom').forEach(el => el.style.display = custom ? 'block' : 'none');
+      };
 
       ws.onopen = () => {
         ws.send(JSON.stringify({ event, uuid }));
@@ -118,12 +122,15 @@
         ids.forEach(id => {
           if (settings[id] !== undefined) document.getElementById(id).value = settings[id];
         });
+        updateVuFields();
       };
       const save = () => {
         ids.forEach(id => settings[id] = document.getElementById(id).value);
         ws.send(JSON.stringify({ event: 'setSettings', context: uuid, payload: settings }));
+        updateVuFields();
       };
       ids.forEach(id => document.getElementById(id).addEventListener(id === 'label' ? 'input' : 'change', save));
+      updateVuFields();
     };
   </script>
 </body>
